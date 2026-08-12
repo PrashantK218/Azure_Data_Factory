@@ -1,0 +1,143 @@
+What is ADF?
+A Fully managed, serverless data integration solution for ingesting, preparing, and transforming all of your data at once.
+
+ADF doesn't support streaming workloads, but it can run databricks notebook where structured streaming or autoloader is used.
+
+Azure Databases:
+Azure SQL Database - For SQL Server 
+Azure MySQL Database
+Azure Postgres Database etc
+
+Azure Storage Account:
+Azure provides a variety of storage solutions under one umbrella called Azure Storage Account.
+
+1. Blob Storage - For unstructured data text files, pdf, media
+2. Files Storage - cloud file storage
+3. Disk Storage - for virtual machine disks
+4. Table Storage
+5. Queue Storage
+
+What is Azure Data Lake Storage Gen2?
+
+Azure Data Lake Storage Gen2 (ADLS Gen2) is Microsoft's scalable cloud storage for big data analytics, built on Azure Blob Storage.
+
+Feautures:
+1. Built on top of blob storage
+2. Hierarchial namespace
+3. Hadoop Compatibility
+4. Enhanced security
+5. Optimized for Analytics
+
+ADF Core Concepts:
+Pipeline
+Activity
+Dataset
+Linked Service
+Integration Runtime
+Data Flow
+Trigger
+
+Pipeline: A logical grouping of activities that together perform a task (e.g., move data from Source A to Sink B).
+Activity: An action performed within a pipeline, such as copying data (Copy Activity) or transforming it (Data Flow Activity).
+Dataset: A named view of data that points to the data you want to use as input or output for activities (e.g., a specific file in Blob Storage or a table in SQL).
+Linked Service: Stores the connection string and credentials for an external resource, acting as a connection string to your data stores or compute.
+Integration Runtime (IR): The compute infrastructure that ADF uses to execute activities, bridging connectivity between ADF and data sources (Azure, self-hosted, SSIS).
+Data Flow: A visual tool for designing data transformations (ETL/ELT) on a large scale, using Spark under the hood.
+Trigger: Defines when a pipeline should run (e.g., on a schedule, in response to an event like file arrival, or manually)
+
+Copy Activity:
+Copy Activity is used to copy/move data between a source and a destination.
+
+Suppose you want to copy a file in a blob storage to an ADLS Gen2 storage. How to do copy activity? What will be required?
+
+We need to define the following.
+
+linked services for connection to blob and adls gen2
+source dataset and destination dataset
+pipeline to run the copy activity
+
+How to create a linked service?
+1. Click on manage. Click new to create a new linked service. 
+2. Select Azure Blob Storage. Give a name.(ls_name)
+3. Select Integration Run time, Authentication method(Conection String, or Azure Key Vault)
+4. Select your Azure subscription and storage account
+5. Test your connection.
+
+How to create a dataset?
+1. Go to Author(Pencil Icon).
+2. Go to Datasets and create a new Dataset.
+3. Select the dataset type. In this case, select csv.  Give a name (ds_name)
+4. select the linked service.
+5. select file path
+
+How to create a pipeline?
+1. Go to Author. Pipelines. Create a new pipeline
+2. Give a pipeline name and description
+3. Go to activities and drag and drop copy data activity
+4. In the general tab give the pipeline a name, description, timeout, retry etc
+5. Go to source and select the source dataset that you have created. Or create a new one.
+6. Go to Sink and select the sink dataset.
+7. Click on debug to run the pipeline. Publish to save.
+
+ADF Activities:
+Copy activity
+Validation Activity: Check if file exists before running a pipeline
+Get Metadata
+If condition
+Delete activity
+
+Q.How to get the previous activity value in another activity? 
+A. First, we need to connect both activities, then we need to add dynamic content in the Expression of the 2nd activity.
+
+
+ADF Triggers:
+
+1. Schedule Triggers -
+2. Tumbling Window Triggers
+3. Event based/storage based Triggers - Runs pipeline in respond to an event like file arrival
+4. Custom Triggers
+
+Schedule Triggers:
+- Scheduled triggers runs periodically at a scheduled time. For example you can schedule a trigger to run a pipeline everyday at 10:00 am.
+- Can only be scheduled for a future time to start
+- Trigger to pipeline relationship is many to many. This means a single trigger can invoke many pipelines.
+Simillarly a single pipeline can be invoked by multiple triggers.
+
+Tumbling window Triggers:
+- Tumbling window triggers runs at periodic intervals.
+- Windows are fixed size non-overlapping
+- Can be scheduled for past windows/slices
+- trigger to pipeline relation is one-to-one
+
+Use TWT when you have to pull data generated in specific time interval, say - pull the files uploaded in Azure storage between 2PM to 3PM, 
+then 3PM to 4PM and so on... TWT allows you to use start time and end time which can be used to filter the source data based on generation time. 
+It can also be used to backfill the data.
+
+Event based Triggers
+- Runs pipeline in respond to an event like file arrival
+- many to many relationship
+
+Q. Difference between schedule trigger and tumbling window trigger? When to use which?
+
+------ Data Ingestion case and deaths data covid 19 ------------
+Data Ingestion from HTTP: http linked service is used to retrieve data from a specified URL
+
+Objective: We want to copy the data present in a url to an adls location.
+
+steps:
+1. Create an http linked service.
+2. Create the http source dataset. select csv file format.
+3. Create adls gen2 sink dataset. choose file format as csv. Give path for the sink folder. 
+4. Create a new pipeline.
+5. Inside the pipeline, create the copy activity. Use the source dataset and sink dataset as created above.
+6. Click on debug 
+
+----- Pipeline Variables ----
+
+
+
+
+
+
+
+

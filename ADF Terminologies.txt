@@ -1,0 +1,36 @@
+ADF Terminologies:
+Storage Account
+Linked Services
+Dataset
+Activities
+Pipeline
+Integration Runtime
+Trigger
+Data Flow
+
+
+ADF Activities:
+
+copy activity
+validation activity
+Get Metadata
+If Condition
+delete activity
+set variable activity
+append variable activity
+
+How to get the previous activity output value in another activity? 
+First, we need to connect both activities, then we need to add dynamic content in the Expression of the 2nd activity then we can choose.
+
+ADF Triggers:
+
+
+Pipeline parameters and variables:
+
+pipeline parameters are external values passed into pipelines, datasets or linked services. The value cannot be changed inside a pipeline.
+
+pipeline variables are internal values set inside a pipeline. The value can be changed inside the pipeline using Set Variable or 
+append variable activity
+
+
+

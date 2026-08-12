@@ -1,0 +1,83 @@
+• What is an Integration Runtime? How many types of IR are there?
+
+• How to move data from on-premises to cloud or private network to cloud?
+Use Self Hosted Integration Runtime.
+1. Install SHIR in on-premises machine
+2. create linked services for source and sink
+3. Create Source and Sink Datasets
+4. Use Copy Activity
+5. Schedule using trigger
+
+• Pipeline Failed. How will you run the pipeline from a failed activity?
+Go to monitoring. Go to the pipeline which got failed. Under rerun option in top-left select rerun from failed activity. 
+If you want to rerun the entire pipeline, select rerun.
+
+• How to re-run a trigger?
+Go to monitor tab. select the trigger. click on rerun.
+
+• How would you move ADF pipelines changes from Dev ->QA ->UAT -> Prod
+CICD using Git configuration and Azure DevOps
+
+• How we can schedule the pipeline?
+You can create a schedule trigger
+
+• How many types of triggers are there? What is the difference between a scheduled trigger and tumbling window trigger.
+
+• How transformation is done in ADF?
+Using Data Flow
+
+• When to use Data Flow and when to use Databricks?
+Data Flow for simpler transformation and Databricks for complex transformation
+
+• How did you implemented incremental loading?
+
+Initially performed historical load into ADLS. Then daily incremental files were dropped into ADLS.
+processed files were archived 
+
+• How do you improve ADF performance?
+
+• How to implement Dynamic ADF Pipelines?
+
+By using Metadata Driven Pipelines, parameters are variables. 
+We can use metadata driven pipelines, parameterized pipelines, datasets or linked services, For each activity for looping etc.
+
+• You have 10 folders in ADLS. Each folder has multiple files. You want to process each folder through a databricks notebook activity.
+How would you process all 10 folders in parallel?
+
+1. Using ForEach Activity + Batch Count
+In the pipeline parameter or trigger parameter pass the files names in an array. Pass this array to the ForEach Activity. Disable sequential execution.
+Set batch count =10. Batch count depends on cluster configuration.
+
+2. Handling Parallelism through DB Notebook:
+Use ThreadPool / multiprocessing in notebook
+
+3. Create Databricks Job with multiple tasks. Trigger from ADF. Databricks handles parallelism
+
+
+• How do you handle errors in ADF?
+
+• How do you monitor ADF pipelines?
+
+• How to read json output of one activity into another?
+
+• What is the difference between correlation_id and run_id(Pipeline Run ID)?
+
+
+
+• Explain ADF Deployment Cycle.
+
+
+
+
+
+----- Senior Data Engineer Qualities (Team-Lead level and Above) -------
+• Team Lead and Client handling experience
+• Be able to explain projects in detail end-to-end.
+• Strong grasp in Architecture and System Design.
+• Strong Optimization skills
+• Understand the trade-offs involved in adapting and implementing new technology and tools
+• Understand production best-practises
+• Data warehosuing and Data Modelling in-depth.
+• CI/CD
+• Data Governance and Security
+• Learning new technologies and tools

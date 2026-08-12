@@ -1,0 +1,432 @@
+• What is Azure Data Factory (ADF)?
+
+Azure Data Factory (ADF) is Microsoft’s fully managed, serverless cloud data integration service. 
+It allows you to build, orchestrate, and automate ETL (Extract, Transform, Load) and ELT (Extract, Load, Transform) workflows to move and process data at scale.
+
+• What are the main components of Azure Data Factory? 
+
+Pipelines
+Activities
+Datasets
+Linked Services
+Integration Runtime
+Triggers
+
+• Does ADF supports streaming workloads?
+
+ADF doesn't support streaming workloads, but it can run databricks notebook where structured streaming or autoloader is used.
+
+• What is Azure Storage Account?
+Azure storage account is a cloud container for various Azure storage solutions such as Blob storage, Files Storage, Disk Storage, Table Storage and
+Queue storage.
+
+Blob Storage  - For unstructured data text files, pdf, media
+Files Storage - cloud file storage
+Disk Storage  - for virtual machine disks
+Table Storage - NoSQL storage for key-attribute, structured data.
+Queue Storage - Messaging storage for reliable, asynchronous communication between application components
+
+• What is Azure Data Lake Storage Gen2?
+
+Azure Data Lake Storage Gen2 (ADLS Gen2) is Microsoft's scalable cloud storage for big data analytics, built on Azure Blob Storage.
+
+Feautures:
+ - Built on top of blob storage
+ - Hierarchial namespace
+ - Hadoop Compatibility
+ - Enhanced security
+ - Optimized for Analytics
+ 
+----------------- ADF Core Concepts -------------------------
+Pipeline
+Activity
+Dataset
+Linked Service
+Integration Runtime
+Trigger
+ 
+• What is a pipeline?
+A pipeline is a logical grouping of activities that perform together a task (e.g., move data from Source A to Sink B).
+
+• What is an activity?
+An action performed within a pipeline, such as copying data (Copy Activity) or transforming it (Data Flow Activity).
+
+• Name some important activities.
+
+Copy Activity - move data from Source A to Sink B
+Delete Activity - delete data
+Validation Activity - Check if file exists before running a pipeline
+Get Metadata - retrieves information about your data (files, folders, or tables) without reading the data itself
+If Condition - Logical branching
+Web Activity - REST API Calls
+Set Variable Activity - 
+Append Variable Activity - 
+Lookup Activity - 
+For Each Activity - Looping items within a pipeline
+Databricks Notebook - attach a databricks notebook to run spark jobs
+Execute Pipeline - allows one pipeline to invoke and execute another pipeline. Modularization.
+
+• What is a Dataset?
+A Dataset represents the actual data you're working with. For example a file in a blob storage or a table in database.
+
+• What is a Linked Service?
+A Linked Service Stores the connection info and credentials for external resources. 
+These external resources can be data stores such as Azure Blob Storage, Azure SQL Database, Snowflake, Amazon S3, or on-premises SQL Server
+or compute services like Azure Databricks, Azure HDInsight, or Azure Batch.
+
+Every linked service must point to an Integration Runtime to execute operations or connect to a data store. 
+If you do not explicitly assign one, it will automatically use the Default Azure Integration Runtime
+
+• What is the difference between a linked service and a dataset?
+
+A linked service defines how to connect to an external system.
+A Dataset defines what data to use within that system.
+
+• What is an integration Runtime? 
+Integration Runtime is the compute infrastructure that ADF uses to execute activities. IR = the “engine” that actually runs your pipelines.
+IR is used for Data Flow, Data Movement, Activity Dispatch and SSIS Package Execution.
+
+• How many types of IR are there. When to use which?
+Types of IR:
+There are 3 types of IR:
+
+Azure IR, Self-Hosted IR and Azure SSIS IR.
+
+Azure IR:
+Azure IR is the fully managed, serverless compute in ADF. It is used for cloud-to-cloud data movement or within the cloud data transformations in a public network.
+ADF provides a default Azure IR called AutoResolveIntegrationRuntime with the nearest location to the data sink for faster access. 
+You can manually create an Azure IR and choose the desired location.
+
+When to use Azure IR?
+Use Azure IR when data movement/transformation requirement is within cloud and you don't want to manage Infrastructure
+
+Self-Hosted IR:
+
+Self-Hosted IR is used for Data movement and Activity dispatch between cloud and on-premises machines or virtual machine inside a private network.
+For example on-prem sql server to ADLS. It acts as a bridge between ADF and you private data.
+Self-hosted IR compute environmnt is installed on an on-premises machine or a virtual machine inside a private network.
+You have to manually manage infra.
+
+When to use Self-Hosted IR?
+When you want to connect ADF to on-prem machines or virtual machines in a private network, or azure resources with public network access disabled or when you need
+custom connectors
+
+What is Linked Self-Hosted IR (also called shared self-hosted IR)?
+Through SHIR, only one instance of ADF can be connected to an on-premises machine but with Shared SHIR, multiple ADF instances can access.
+
+Azure SSIS IR:
+Azure SSIS IR is used to lift and shift SSIS workloads to Azure. It is a fully managed cluster of Azure VMs specifically dedicated to run SSIS packages in Azure.
+The Azure-SSIS IR can be provisioned in either public network or private network.
+
+When to use Azure SSIS IR?
+When you want to lift and shift SSIS workloads to Azure.
+
+• How does Azure Data Factory handle data movement between cloud and on-premise environments?
+Azure Data Factory enables secure data movement between cloud and on-premise environments through the Self-hosted Integration Runtime (IR), 
+which acts as a bridge between ADF and on-premise data sources.
+
+• What is Activity Dispatch?
+Activity dispatch is the process by which ADF dispatches a transformation to an external compute instead of carrying out itself. 
+It dispatches the activity, monitors it and tracks it progress. For example a Azure Databricks Notebook Job or Stored procedure Activities dispatched to 
+Azure SQL.
+
+Activity dispatch in Azure Data Factory (ADF) is the process by which the Integration Runtime (IR) delegates and coordinates the execution of external transformation
+tasks. Instead of processing the data directly, ADF sends the command to an external compute engine, monitors its execution, and tracks its success or failure
+
+
+• What is a trigger?
+A trigger defines when a pipeline should run. You can configure a trigger to run on a schedule, in response to an event like file arrival, 
+or you can run it manually.
+
+• What are the types of ADF triggers? When to use which?
+
+There are three types od triggers in ADF. Schedule Triggers, Tumbling Window Triggers and Event based Triggers.
+
+Schedule Triggers:
+A Scheduled trigger runs periodically at a scheduled time. For example you can schedule a trigger to run a pipeline everyday at 10:00 am.
+Can only be scheduled for a future time to start
+Trigger to pipeline relationship is many to many. This means a single trigger can invoke many pipelines.
+Simillarly a single pipeline can be invoked by multiple triggers.
+
+Event based Triggers:
+Runs pipeline in respond to an event like file arrival. Trigger to pipeline relationship is many to many.
+
+Tumbling window Triggers:
+A tumbling window trigger runs at specific time intervals. These time intervals or windows are fixed size, contiguous and are non-overlapping.
+For example, when you want to ingest data generated between 10-12 am or Use TWT when you have to pull data generated in specific time interval, 
+say - pull the files uploaded in Azure storage between 2PM to 3PM, then 3PM to 4PM and so on.
+It can be scheduled for past windows/slices. Trigger to pipeline relation is one-to-one.
+It is primarily used to process data in batches, run historical data loads (backfilling), and build trigger-to-trigger dependencies
+
+• Difference between schedule trigger and tumbling window trigger? When to use which?
+
+1. Schedule trigger runs at a particular time while a tumbling window trigger runs at particular time-slots.
+2. Trigger to pipeline relationship is many to many in case of schedule triggers while it is one-to-one in case of tumbling window triggers.
+3. Scheduled triggers do not retain past state. Tumbling window retain past states. Hence you can use tumbling window triggers to run pipelines for a past date
+4. There is no trigger dependency in schedules triggers. There can be trigger dependency in case of Tumbling Window Triggers.
+
+Use Schedule Trigger when you want to trigger pipeline run on a specific time.
+Use Tumbling window when you want to process data in batches, run historical data loads (backfilling), and build trigger-to-trigger dependencies.
+
+• What are the steps to create a copy activity pipeline in ADF?
+
+1. Go to pipelines and create a new pipeline. Give it a name.
+2. Drag and drop copy activity from activities.
+3. Select the source and sink dataset. If they do not exist, create them. 
+   Create the required linked service and select the required IR.
+4. Debug to see results
+
+1. create linked services for the source and sink
+2. create datasers for source and sink
+3. create a pipeline with copy activity and use the source dataset and sink dataset.
+4. click on debug to see the results
+
+• What are parameters and variables in ADF? What is the difference between them?
+
+parameters are external values passed into pipelines, datasets or linked services. The value cannot be changed inside a pipeline.
+variables are internal values set inside a pipeline. The value can be changed inside the pipeline using Set Variable or 
+append variable activity
+
+parameters are immutable whereas variables are mutable.
+
+For example parameters such as file path or table name is passed down a pipeline whereas variables are used  as counters, tracking filenames in a loop, or holding 
+calculation results.
+
+• What is a Dynamic content in ADF? What is its use?
+Dynamic content in ADF are expressions which are used to dynamically assign values (like file paths, table names, or parameters) during pipeline execution 
+instead of hardcoding them.
+
+• How to get the previous activity output value in another activity? 
+First, we need to connect both activities, then we need to add dynamic content in the Expression of the 2nd activity then we can choose which value to get.
+
+• What is Metadata Driven Pipeline? How to implement it?
+
+In metadata driven pipeline, ADF uses an external configuration such as a json file or to dynamically control the execution of pipelines.
+This ensures pipelines reusability avoiding hardcoding of file path or file name etc. 
+
+The pipeline reads the config file through lookup activity and a foreach activity iterates over them invoking a pipeline.
+
+• What is Data Flow?
+Data Flow: A visual tool for designing data transformations (ETL/ELT) on a large scale, using Spark under the hood.
+
+• When to use data flow? When not to use data flow?
+
+Use data flow when you want to transform your data without any codes.
+Do not use Data Flow when you want tight control over the data which will require spark code or when you already have access to Azure Databricks Notebooks.
+ 
+What is the difference between copy activity and Data Flow?
+While the ADF Copy Activity simply moves data from one place to another exactly as it is, a Data Flow allows you to alter, reshape, clean, and enrich the data 
+dynamically while it is in transit.
+
+----------------- Azure Databricks -----------------------
+• How to enable usage of  Azure Databricks in Azure?
+1. Create Azure Databricks workspace as a new resource.
+2. Create ADB Cluster
+3. Create ADB Linked Service
+4. Create ADB Notebook Activity to orchestrate Spark Transformation Jobs
+
+We have to create an Azure Databricks workspace as new resource, create an ADB cluster and then we can use the ADB notebooks for Spark codes.
+
+• How does ADF trigger Databricks notebooks?
+ADF triggers Databricks notebooks through Databricks Notebook Activity
+
+• What type of clusters are used to execute DB Notebook Activity?
+Job Clusters are used to execute DB Notebook Activity.
+
+• How to access ADLS Gen2 through Databricks?
+
+1. Directly using Storage Account key in spark config
+2. Mounting ADLS in Databricks using dbutils.fs.mount command. This requires a service principle and secrets to be kept in Azure key-vault.
+3. Using Unity Catalog external storage location feature. This requires a storage credential having access to the Azure Storage Account.
+
+	1. Using Storage Account Key (Easy and fast but less secure. Not recommended for production)
+
+	We can directly pass the storage account key to our spark session through config to access ADLS.
+	This is the easiest but least secure method, primarily used for quick, interactive exploration rather than production.
+
+	spark.conf.set(
+		"fs.azure.account.key.storage_account_name.dfs.core.windows.net",
+		dbutils.secrets.get(scope="scope-name", key="secret-key")
+	)
+
+	# Read directly
+	df = spark.read.csv("abfss://container_name@storage_account_name.dfs.core.windows.net/file.csv")
+
+	2. Using Service Principal + Key-vault 
+	We create a service principal to grant access to the storage account and then use that service principal to create a mount in databricks 
+	using dbutils.fs.mount command. This is the best approach for production if unity catalog is not enabled.
+	
+	Pros: Secure with RBAC (Role based Access Control)
+	Cons: Requires secrets management. Legacy pattern. Unity Catalog external location is recommended.
+
+	Detailed Steps:
+
+	Create service principal:
+	Go to Microsoft Entra ID and register an APP to get a Client ID, Tenant ID, and Client Secret.
+	
+	Grant Service Principal storage account access:
+	Assign the Storage Blob Data Contributor role to this app on your ADLS Gen2 account. Store your secrets securely in an Azure Key Vault, and create a 
+	Key Vault-backed secret scope in Databricks.
+	
+	How to Use the Scope Secrets in Notebooks?
+	# Fetch secret securely without exposing passwords in plain text
+	dbutils.secrets.get(scope="your-scope-name", key="your-keyvault-secret-name")
+	
+	Create a mount in databricks using dbutils.fs.mount command:
+	configs = {
+	  "fs.azure.account.auth.type": "OAuth",
+	  "fs.azure.account.oauth.provider.type": "org.apache.hadoop.fs.azurebfs.oauth2.ClientCredsTokenProvider",
+	  "fs.azure.account.oauth2.client.id": dbutils.secrets.get(scope="<your-scope>", key="client-id"),
+	  "fs.azure.account.oauth2.client.secret": dbutils.secrets.get(scope="<your-scope>", key="client-secret"),
+	  "fs.azure.account.oauth2.client.endpoint": "https://microsoftonline.com<tenant-id>/oauth2/token"
+	}
+
+	dbutils.fs.mount(
+	  source = "abfss://<container>@<storage-account>.dfs.core.windows.net/",
+	  mount_point = "/mnt/<mount-name>",
+	  extra_configs = configs)
+	  
+	 # Check access 
+	 dutils.fs.ls(/mnt/)
+	 
+	 df = spark.read.parquet("/mnt/<mount-name>")
+	 
+	 # How to unmount?
+	 dbutils.fs.unmount("/mnt/<mount-name>")
+
+	3. Unity Catalog
+	
+	We can use unity catalog to create an external storage location with a storage credential having access to the Azure Storage Account.
+	1. Create a Databricks Access Connector in the Azure Portal and note its resource ID.
+	2. Assign the Storage Blob Data Contributor role to the Access Connector on your ADLS Gen2 storage account.
+	3. In Databricks Catalog, create a Storage Credential pointing to that managed identity.
+	4. Create an External Location that links your Databricks path to your ADLS Gen2 container path. Grant READ/WRITE permissions to users/groups as needed.
+	
+	No mounts or configs needed. Read/write directly:
+	df = spark.read.parquet("abfss://<container>@<storage-account>.dfs.core.windows.net/path/to/data")
+    df.write.format("delta").save("abfss://<container>@<storage-account>.dfs.core.windows.net/output")
+	
+	Pros: Most secure. RBAC + Fine grained access control because of unity catalog
+	Cons: Requires Unity Catalog. Not available in older setups.
+	
+Follow: 
+https://community.databricks.com/t5/data-engineering/establishing-a-connection-between-adls-gen2-databricks-and-adf/td-p/141166
+
+• How to mount ADLS in Databricks?
+We create a service principal with access to the storage account and use that service principal to mount ADLS in databricks using the dbutils.fs.mount command.
+		
+• What is a service principal? Difference between service principal and managed identity.
+A service principal is a non-human identity created for applications or services to securely access resources in cloud.
+
+A managed identity is a specialized, automated type of service principal that eliminates the need to manually manage security credentials.
+
+• How to create a service principal in microsoft azure?
+Go to Microsoft Entra ID and register an APP to get a Client ID, Tenant ID, and Client Secret.
+
+• What is Pipelines dependency and Trigger Dependency?
+
+Pipeline Depndency: 
+You can make one pipeline dependent on another by using dependency conditions.
+
+Available Dependency Conditions are: Succeeded, Failed, Skipped, Completed
+
+Let's Consider there is a pipeline dependency A -> B
+Suceeded: B will run only when A runs successfully without any errors.
+Failed: B will run only when A Fails
+Skipped: B will run only when pipeline A is skipped
+Completed: B will run only when A either succeeds or fails
+
+
+Trigger Dependency: 
+You can make only tumbling window triggers dependent on each other. Tumbling window triggers can be self-dependant too.
+
+• Retry and Error handling
+ - Retry Policy
+ - Timeout
+ - Dependency Conditions:
+    Success, Failure, Completion and Skip
+ - Failure Path
+ 
+Interview Question: What happends when one table fails among 200 tables. 
+
+• Logging Framework
+
+ - Implement pipeline logging
+ - Audit Tables
+ - Execution Tracking
+ Track:
+ Rows processed
+ Execution Status
+ Duration
+ Error Message
+ 
+
+• Parallel processing
+batch count
+For each parallelism
+concurrency
+
+
+
+• Monitoring
+
+What do we want to monitor?
+Trigger Runs, Pipeline Runs, Activity Runs, Azure Data Factory Resource, Integration Runtime
+
+How to create alerts?
+Go to monitor -> Under Notifications find alerts and metrics. Add a new alert.
+
+We use Monitor tab for monitoring triggers and pipelines
+
+What is Azure Monitor?
+Azure monitor is used to store and analyze logs and metrics for activity, pipeline and trigger runs.
+It can also be used to send the logs and metrics to Log Analytics Workspace.
+
+
+• CI/CD and deployment:
+ - Git Integration
+ - Branching
+ - ARM templates
+ - Environment Deployment
+ - Azure Devops - dev.azure.com
+ 
+What is CI/CD?
+
+CI/CD Stands for Continuous Integration and Continuous Delivery.
+
+Continous Integration: 
+Continously integrating individual developer's code into one source control system such as git and immediately running automated builds 
+and tests to verify those changes.
+
+Continous Deployment: Continously Deploying the tested and released code into production environment.
+
+All Objects in ADF can be represented by a json file.
+
+ARM Template: You build ADF projects using ARM templates. 
+An ARM (Azure Resource Manager) Template is a JavaScript Object Notation (JSON) file that defines the infrastructure and configuration for your Azure environment. 
+It utilizes declarative syntax, allowing you to state what you want to deploy.
+
+
+ 
+• ADF optimization: How do you improve ADF performance?
+
+Copy Activity Optimization:
+Increase parallelism
+Increase DIU(Data Integration Unit)
+Partition Huge Data 
+Use staged Copy - Write to Blob → then load to DW
+Increase batch count in ForEach Activity
+
+
+• Security
+ - RBAC
+ - Managed identity
+ - Private Endpoints
+ - Azure Key Vault
+ 
+ 
+
+
+
+
+ 

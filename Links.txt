@@ -1,0 +1,12 @@
+https://www.datacamp.com/blog/azure-data-factory-interview-questions
+
+https://nareshit.com/blogs/azure-data-engineer-interview-questions-on-azure-data-factory
+
+http://academy.azurelib.com/2872
+
+https://community.databricks.com/t5/data-engineering/establishing-a-connection-between-adls-gen2-databricks-and-adf/td-p/141166
+ 
+1. ADF Fundamentals
+2. Pipelines and Triggers
+3. CI/CD and Deployment
+4. Security and Monitoring
